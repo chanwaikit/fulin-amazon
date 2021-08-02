@@ -1,0 +1,16 @@
+{
+  "development": {
+    "username": "root",
+    "password": "88888888",
+    "database": "learn-mysql",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": "88888888",
+    "database": "learn-mysql",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
