@@ -30,22 +30,14 @@ class ProfitController extends Controller {
 
   }
 
-  async getSku() {
+  async getCategory() {
     const ctx = this.ctx;
     if (!ctx.cookies.get('auth-token')) {
       await this.getCookie();
     }
 
-    ctx.body = await ctx.service.lingxing.sku.fetch();
-  }
+    ctx.body = await ctx.service.lingxing.category.fetch();
 
-  async getSkuMid() {
-    const ctx = this.ctx;
-    if (!ctx.cookies.get('auth-token')) {
-      await this.getCookie();
-    }
-
-    ctx.body = await ctx.service.lingxing.sku.getSkuMid();
   }
 }
 

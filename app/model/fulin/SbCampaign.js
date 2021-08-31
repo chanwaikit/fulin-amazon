@@ -18,7 +18,7 @@ module.exports = app => {
     timestamps: false,
   });
   Sku.associate = function() {
-    app.model.Fulin.SbCampaign.belongsTo(app.model.Fulin.AdGroup, { foreignKey: 'portfolio_id', targetKey: 'portfolio_id' });
+    app.model.Fulin.SbCampaign.belongsTo(app.model.Fulin.SbGroup, { foreignKey: 'portfolio_id', targetKey: 'portfolio_id' });
   };
   return Sku;
 };

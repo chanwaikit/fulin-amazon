@@ -9,8 +9,8 @@ class UserService extends Service {
 
 
     const authToken = ctx.cookies.get('auth-token');
-    const nowTime = new Date().getTime();
-    for (let i = 0; i < 60; i++) {
+    const nowTime = new Date().getTime() - 365 * 24 * 60 * 60 * 1000;
+    for (let i = 0; i < 85; i++) {
       const date_str = dayjs(nowTime - 24 * 60 * 60 * 1000 * i).format('YYYY-MM-DD');
       const result = await ctx.curl('https://fulintech.lingxing.com/api/report/asinLists', {
       // 必须指定 method
@@ -36,7 +36,7 @@ class UserService extends Service {
       });
       // console.log(64, dayjs(nowTime - 24 * 60 * 60 * 1000 * i).format('YYYY-MM-DD'));
       const resultArray = result.data.list.filter(item => {
-        return item.volume != '0';
+        return item.avg_star != '0.00';
       });
       for (let i = 0; i < resultArray.length; i++) {
 

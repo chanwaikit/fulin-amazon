@@ -6,254 +6,25 @@ const dayjs = require('dayjs');
 // 从 egg 上获取（推荐）
 const Service = require('egg').Service;
 const { QueryTypes, Op } = require('sequelize');
-class UserService extends Service {
-  async getOneSkuWeekStatistic() {
-    return await this.getSkuWeekStatistic();
-  }
-  async getSkuWeekStatistic() {
+class CreateTable extends Service {
+
+  async importTable() {
     const { ctx } = this;
+    const nowTime = new Date().getTime() - 20 * 24 * 60 * 60 * 1000;
+    let tableData = [];
+    for (let k = 0; k < 60; k++) {
+      const date_str = dayjs(nowTime - 24 * 60 * 60 * 1000 * k).format('YYYY-MM-DD');
+      tableData = await this.fetch(date_str, date_str);
+      console.log(17, tableData);
+      tableData.map(item => {
+        item.local_sku_mid_date = item.local_sku + '_' + item.mid + '_' + item.date_str;
+      });
+      await ctx.model.Fulin.LocalSkuMidDate.bulkCreate(tableData, { updateOnDuplicate: [ 'local_sku_mid_date' ] });
 
-    const { startDate, endDate } = ctx.request.body;
-    const startDateMs = dayjs(startDate).valueOf();
-    const endDateMs = dayjs(endDate).valueOf();
-    const days = (endDateMs - startDateMs) / 60 / 60 / 1000 / 24 + 1;
-    const daysArray = [];
-    for (let i = 0; i < days; i++) {
-      if (i % 7 === 0) {
-        const pStartDateMs = startDateMs + i * 60 * 60 * 24 * 1000;
-        const pEndDateMs = (pStartDateMs + 6 * 24 * 60 * 60 * 1000) > endDateMs ? endDateMs : (pStartDateMs + 6 * 24 * 60 * 60 * 1000);
-        daysArray.push({
-          date_str: dayjs(startDateMs + i * 60 * 60 * 24 * 1000).format('YYYY-MM-DD'),
-          startDateMs: pStartDateMs,
-          endDateMs: pEndDateMs,
-          start_date_str: dayjs(startDateMs + i * 60 * 60 * 24 * 1000).format('YYYY-MM-DD'),
-          end_date_str: dayjs(pEndDateMs).format('YYYY-MM-DD'),
-
-        });
-      }
     }
-    const promiseArray = [];
-    const self = this;
-
-
-    let skuWeekData = [];
-    await Promise.all(daysArray.map(item => {
-      return this.fetch(item.start_date_str, item.end_date_str);
-    })).then(res => {
-      skuWeekData = res;
-    });
-    return {
-      daysArray,
-      skuWeekData,
-    };
+    return tableData;
   }
-
-  async getAdStatistic() {
-    const { ctx } = this;
-    const { startDate, endDate } = ctx.request.body;
-    const skuTable = ctx.model.Fulin.SkuList;
-    const sbCampaignTable = ctx.model.Fulin.SbCampaign;
-    const spCampaignTable = ctx.model.Fulin.SpCampaign;
-    const sdCampaignTable = ctx.model.Fulin.SdCampaign;
-
-    // const users = await ctx.model.query("SELECT date_format(date_str,'%Y-%m-%d') weeks,count(*) from `sb_campaigns` group by weeks", { type: QueryTypes.SELECT });
-    // console.log(19999, ctx.model.query);
-
-    // const users = await ctx.model.query('SELECT date_str weekofyear(date_str) AS week_id, from `sb_campaigns` ', { type: QueryTypes.SELECT });
-
-    //  const users = await ctx.model.query('SELECT weekofyear(date_str) as w,count(*) from `sb_campaigns` ', { type: QueryTypes.SELECT });
-
-    const startDateMs = dayjs(startDate).valueOf();
-    const endDateMs = dayjs(endDate).valueOf();
-    const days = (endDateMs - startDateMs) / 60 / 60 / 1000 / 24 + 1;
-
-    // sku_sb_tables
-
-    let skuSb = await ctx.model.Fulin.SkuListSbGroup.findAll({
-      include: [
-        {
-          model: skuTable,
-          required: false,
-        },
-        {
-          separate: true,
-          model: sbCampaignTable,
-          where: {
-            date_str: {
-              [Op.between]: [ startDate, endDate ],
-            },
-          },
-          required: false,
-        },
-      ],
-    });
-
-    let skuSpSd = await ctx.model.Fulin.SkuList.findAll({
-      include: [
-        {
-          separate: true,
-          model: spCampaignTable,
-          where: {
-            date_str: {
-              [Op.between]: [ startDate, endDate ],
-            },
-          },
-          required: false,
-        },
-        {
-          separate: true,
-          model: sdCampaignTable,
-          where: {
-            date_str: {
-              [Op.between]: [ startDate, endDate ],
-            },
-          },
-          required: false,
-        },
-      ],
-    });
-
-    let categories = await ctx.model.Fulin.Category.findAll();
-
-    skuSpSd = skuSpSd.map(el => el.get({ plain: true }));
-    categories = categories.map(el => el.get({ plain: true }));
-
-    skuSb = skuSb.map(el => el.get({ plain: true }));
-
-
-    const obj = {}; // 数组去重  SB广告
-    skuSb = skuSb.reduce(function(item, next) {
-      obj[next.portfolio_id] ? '' : obj[next.portfolio_id] = true && item.push(next);
-      return item;
-    }, []);
-
-
-    const adDayObj = { // {"2021-07-01":[]}
-
-    };
-    const result = [];
-    for (let i = 0; i < days; i++) {
-      adDayObj[dayjs(startDateMs + i * 24 * 60 * 60 * 1000).format('YYYY-MM-DD')] = [];
-    }
-
-
-    skuSpSd.map(item => {
-      item.sp_campaigns.map(element => {
-        if (adDayObj[element.date_str]) {
-          const obj = {
-            ...element,
-            ...item,
-            type: 'sp',
-          };
-          delete obj.sp_campaigns;
-          delete obj.sd_campaigns;
-          adDayObj[element.date_str].push(obj);
-          result.push(obj);
-        }
-        return element;
-      });
-
-      item.sd_campaigns.map(element => {
-        if (adDayObj[element.date_str]) {
-          const obj = {
-            ...element,
-            ...item,
-            type: 'sd',
-
-          };
-          delete obj.sp_campaigns;
-          delete obj.sd_campaigns;
-          adDayObj[element.date_str].push(obj);
-          result.push(obj);
-
-        }
-        return element;
-      });
-    });
-
-    skuSb.map(item => {
-      if (item.sku_list) { // 存在脏数据，有广告，但是无单子 原因是没有全的sku列表
-        item.sb_campaigns.map(element => {
-          if (adDayObj[element.date_str]) {
-            const obj = {
-              ...element,
-              category_text: item.sku_list ? item.sku_list.category_text : '',
-              cid: item.sku_list ? item.sku_list.cid : '',
-              ...item,
-            };
-
-            delete obj.sb_campaigns;
-            delete obj.sku_list;
-
-            adDayObj[element.date_str].push(obj);
-
-            result.push(obj);
-
-          }
-          return element;
-        });
-      }
-    });
-
-    const daysArray = [];
-    for (let i = 0; i < days; i++) {
-      if (i % 7 === 0) {
-        daysArray.push({
-          date_str: dayjs(startDateMs + i * 60 * 60 * 24 * 1000).format('YYYY-MM-DD'),
-          startDateMs: startDateMs + i * 60 * 60 * 24 * 1000,
-        });
-      }
-    }
-    categories.map(item => {
-      const pDaysArray = [ ...daysArray ];
-      const weekAds = [];
-      const adData = result.filter(element => item.cid == element.cid).sort((a, b) => dayjs(a.date_str) - dayjs(b.date_str));
-      pDaysArray.map(element => {
-        const allAds = adData.filter(child => {
-          return dayjs(child.date_str).valueOf() >= element.startDateMs && dayjs(child.date_str).valueOf() < element.startDateMs + 7 * 24 * 60 * 60 * 1000;
-        });
-        const weekObj = {
-          date_str: element.date_str,
-          cost: 0,
-          sales_amount: 0,
-        };
-        allAds.map(element => {
-          weekObj.cost += Number(element.total_cost || element.cost || 0);
-          weekObj.sales_amount += Number(element.total_sales_amount || element.sales_amount || 0);
-
-        });
-        weekObj.cost = weekObj.cost.toFixed(2);
-        weekObj.sales_amount = weekObj.sales_amount.toFixed(2);
-
-        weekAds.push(weekObj);
-      });
-
-      item.weekAds = weekAds;
-      item.total_cost = 0;
-      item.total_sales_amount = 0;
-      adData.map(element => {
-        item.total_cost += Number(element.total_cost || element.cost || 0);
-        item.total_sales_amount += Number(element.total_sales_amount || element.sales_amount || 0);
-      });
-
-      item.total_cost = item.total_cost.toFixed(2);
-      item.total_sales_amount = item.total_sales_amount.toFixed(2);
-    });
-    let cost_sum = 0;
-    let sales_amount_sum = 0;
-    categories.map(element => {
-      cost_sum += Number(element.total_cost);
-      sales_amount_sum += Number(element.total_sales_amount);
-    });
-    return {
-      cost_sum: cost_sum.toFixed(2),
-      sales_amount_sum: sales_amount_sum.toFixed(2),
-      categories,
-      x_axis: daysArray.map(element => element.date_str),
-    };
-  }
-
-  async getSkuData(start_date_str, end_date_str) {
+  async getSkuData(startDate, endDate) {
     const { ctx } = this;
 
     const profitTable = ctx.model.Fulin.ProfitStatistic;
@@ -266,20 +37,15 @@ class UserService extends Service {
 
     const skuTable = ctx.model.Fulin.SkuList;
 
-    let { startDate, endDate, cid, mid, local_sku } = ctx.request.body;
-    if (start_date_str) {
-      startDate = start_date_str;
-    }
-    if (end_date_str) {
-      endDate = end_date_str;
-    }
-    const where = {
-      ...(cid ? { cid } : {}),
-      ...(mid ? { mid } : {}),
-      ...(local_sku ? { local_sku } : {}),
-    };
+    // const { startDate, endDate, cid, mid, local_sku } = ctx.request.body;
+
+    // const where = {
+    //   ...(cid ? { cid } : {}),
+    //   ...(mid ? { mid } : {}),
+    //   ...(local_sku ? { local_sku } : {}),
+    // };
     return await skuTable.findAll({
-      where,
+      // where,
       include: [
         {
           model: sbGroupTable,
@@ -340,14 +106,9 @@ class UserService extends Service {
       // limit: 10,
     });
   }
-  async fetch(start_date_str, end_date_str) {
-
-
-    const Sku = await this.getSkuData(start_date_str, end_date_str);
-
+  async fetch(startDate, endDate) {
+    const Sku = await this.getSkuData(startDate, endDate);
     const result = [];
-
-
     Sku.map(item => {
       const sbGroups = item.sb_groups || [];
       const profitStatistics = item.profit_statistics || [];
@@ -552,13 +313,6 @@ class UserService extends Service {
         return el.local_sku + '_' + el.mid == ol.local_sku + '_' + ol.mid;
       });
 
-      // if (el.local_sku === 'DVD-225_Black_UK_ELECTCOM') {
-      //   console.log(444, el, el.fba_shipment);
-      // }
-      // if (el.local_sku === 'CD06B_White_US_VENLOIC') {
-      //   console.log(254, el, el.fba_shipment);
-      // }
-
       if (el.fba_shipment) { // 有效数据
         if (res !== -1) {
           newResult[res].local_sku_mid = el.local_sku + '_' + el.mid;
@@ -602,5 +356,5 @@ class UserService extends Service {
     return newResult;
   }
 }
-module.exports = UserService;
+module.exports = CreateTable;
 

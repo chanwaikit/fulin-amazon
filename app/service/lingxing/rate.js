@@ -1,0 +1,49 @@
+'use strict';
+// app/service/user.js
+const dayjs = require('dayjs');
+// 从 egg 上获取（推荐）
+const Service = require('egg').Service;
+const { QueryTypes, Op } = require('sequelize');
+
+class UserService extends Service {
+  async getRate() {
+    const { ctx } = this;
+    const authToken = ctx.cookies.get('auth-token');
+    const data = await ctx.curl('https://fulintech.lingxing.com/api/currency/lists', {
+      // 必须指定 method
+      method: 'GET',
+      // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
+      contentType: 'json',
+      headers: {
+        cookie: 'auth-token=' + authToken,
+      },
+      data: {
+        date: '2021-06',
+        req_time_sequence: '/api/currency/lists$$5',
+
+      },
+      // 明确告诉 HttpClient 以 JSON 格式处理返回的响应 body
+      dataType: 'json',
+    });
+    const data2Mysql = [];
+    data.data.list.map(item => {
+      data2Mysql.push({
+        code_date: item.code + '_' + item.date,
+        ...item,
+      });
+    });
+    await ctx.model.Fulin.RateList.bulkCreate(data2Mysql, { updateOnDuplicate: [
+      'code_date',
+      'name',
+      'icon',
+      'rate',
+      'date',
+      'code',
+    ] });
+
+    return data;
+  }
+
+}
+module.exports = UserService;
+

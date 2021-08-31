@@ -8,7 +8,7 @@ class UserService extends Service {
     const { ctx } = this;
     const authToken = ctx.cookies.get('auth-token');
     const nowTime = new Date().getTime();
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 450; i++) {
       const date_str = dayjs(nowTime - 24 * 60 * 60 * 1000 * i).format('YYYY-MM-DD');
       const result = await ctx.curl('https://fulintech.lingxing.com/api/report/profitAsin', {
       // 必须指定 method
@@ -32,10 +32,10 @@ class UserService extends Service {
         // 明确告诉 HttpClient 以 JSON 格式处理返回的响应 body
         dataType: 'json',
       });
-      console.log(64, dayjs(nowTime - 24 * 60 * 60 * 1000 * i).format('YYYY-MM-DD'));
+      // console.log(64, result.data.list);
       // resultArray = [ ...resultArray, ...result.data.list ];
-      const resultArray = result.data.list;
-
+      const resultArray = result.data.list || [];
+      console.log(38, resultArray);
       for (let i = 0; i < resultArray.length; i++) {
         const obj = {
           date_str,
@@ -43,6 +43,10 @@ class UserService extends Service {
           profit_id: resultArray[i].local_sku + '_' + resultArray[i].sid + '_' + date_str,
           local_sku_sid: resultArray[i].local_sku + '_' + resultArray[i].sid,
           ...resultArray[i],
+          category_text: resultArray[i].category_text[0],
+          cid: resultArray[i].cid[0],
+          bid: resultArray[i].bid[0],
+
         };
         const profitObj = await ctx.model.Fulin.ProfitStatistic.findByPk(obj.profit_id);
         if (!profitObj) {
@@ -62,6 +66,7 @@ class UserService extends Service {
 
     return 111;
   }
+
 }
 module.exports = UserService;
 
