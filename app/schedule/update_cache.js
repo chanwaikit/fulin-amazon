@@ -62,14 +62,14 @@ class UpdateCache extends Subscription {
     ctx.state.authToken = token;
 
     // window.authToken = token;
-    // await ctx.service.lingxing.category.fetch(token);
-    // await ctx.service.lingxing.shop.fetch(token);
-    // await ctx.service.lingxing.adGroup.fetch(token);
+    await ctx.service.lingxing.category.fetch(token);
+    await ctx.service.lingxing.shop.fetch(token);
+    await ctx.service.lingxing.adGroup.fetch(token);
 
-    // await ctx.service.lingxing.spCampaign.fetch(token);
-    // await ctx.service.lingxing.sbCampaign.fetch(token);
-    // await ctx.service.lingxing.sdCampaign.fetch(token);
-    // await ctx.service.lingxing.sku.getSkuMid(token);
+    await ctx.service.lingxing.spCampaign.fetch(token);
+    await ctx.service.lingxing.sbCampaign.fetch(token);
+    await ctx.service.lingxing.sdCampaign.fetch(token);
+    await ctx.service.lingxing.sku.getSkuMid(token);
     await ctx.service.lingxing.sku.getSkuMidProfit(token);
 
     const ms = new Date().getTime();
