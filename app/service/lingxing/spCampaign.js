@@ -10,11 +10,10 @@ class UserService extends Service {
     const ShopList = await ctx.model.Fulin.ShopList.findAll();
 
 
-    const authToken = ctx.cookies.get('auth-token');
+    const authToken = ctx.state.authToken;
     const pResult = [];
     const nowTime = new Date().getTime();
-    for (let k = 0; k < 450; k++) {
-      console.log(14, k);
+    for (let k = 0; k < 15; k++) {
       for (let i = 0; i < SkuList.length; i++) {
         const date_str = dayjs(nowTime - 24 * 60 * 60 * 1000 * k).format('YYYY-MM-DD');
         const result = await ctx.curl('https://fulintech.lingxing.com/api/ads_report_product/ProductReportList', {

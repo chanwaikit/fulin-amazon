@@ -8,7 +8,8 @@ const { QueryTypes, Op } = require('sequelize');
 class UserService extends Service {
   async getProProduct(local_sku, mid, date_str) {
     const { ctx } = this;
-    const authToken = ctx.cookies.get('auth-token');
+    // const authToken = ctx.cookies.get('auth-token');
+    const authToken = ctx.state.authToken;
     const productResult = await ctx.curl('https://fulintech.lingxing.com/api/report/asinLists', {
       // 必须指定 method
       method: 'POST',
@@ -51,7 +52,8 @@ class UserService extends Service {
   }
   async getProfit(local_sku, mid, date_str, sku = {}) {
     const { ctx } = this;
-    const authToken = ctx.cookies.get('auth-token');
+    // const authToken = ctx.cookies.get('auth-token');
+    const authToken = ctx.state.authToken;
 
     const profitResult = await ctx.curl('https://fulintech.lingxing.com/api/report/profitAsin', {
       // 必须指定 method
@@ -105,7 +107,7 @@ class UserService extends Service {
       date_str,
     };
     profitResultArray.map(item => {
-      console.log(item.channel_fee);
+      // console.log(item.channel_fee);
       data.local_sku_mid_date = local_sku + '_' + mid + '_' + date_str;
       data.local_sku_mid = local_sku + '_' + mid;
       data.local_sku = local_sku;
@@ -307,14 +309,14 @@ class UserService extends Service {
       ...sbObj,
     };
   }
-  async getSkuMid() {
+  async getSkuMidProfit() {
     const { ctx } = this;
-    const authToken = ctx.cookies.get('auth-token');
+    // const authToken = ctx.cookies.get('auth-token');
 
     let allLocalSku = await ctx.model.Fulin.LocalSkuMidList.findAll(); // 先拿到总的sku
     allLocalSku = allLocalSku.map(el => el.get({ plain: true }));
-    const nowMs = dayjs('2021-07-07').valueOf();
-    for (let t = 0; t < 1; t++) {
+    const nowMs = dayjs().valueOf();
+    for (let t = 0; t < 60; t++) {
       const date_str = dayjs(nowMs - t * 60 * 60 * 24 * 1000).format('YYYY-MM-DD');
       const result = [];
       // console.log('315-------------------------', t);
@@ -411,9 +413,9 @@ class UserService extends Service {
 
     return [];
   }
-  async getSkuMid1() {
+  async getSkuMid(authToken) {
     const { ctx } = this;
-    const authToken = ctx.cookies.get('auth-token');
+    // const authToken = ctx.cookies.get('auth-token');
     const nowTime = new Date().getTime();
     const end_date = dayjs(nowTime - 24 * 60 * 60 * 1000).format('YYYY-MM-DD');
     const start_date = dayjs(nowTime - 365 * 24 * 60 * 60 * 1000).format('YYYY-MM-DD');
@@ -471,6 +473,39 @@ class UserService extends Service {
           },
         });
       }
+
+
+      const obj1 = await ctx.model.Fulin.SkuList.findByPk(item.local_sku + '_' + item.sid);
+      const data1 = {
+        local_sku_sid: item.local_sku + '_' + item.sid,
+        pid_sid: item.pid + '_' + item.sid,
+        pid: item.pid,
+        local_sku: item.local_sku,
+        asin: item.asin1,
+        local_name: item.local_name,
+        sid: item.sid,
+        mid: item.mid,
+        country: item.marketplace,
+        cid: item.cid[0],
+        category_text: item.category_text[0],
+        code: item.code,
+        icon: item.icon,
+        bid: item.bid[0],
+      };
+
+      if (!obj1) {
+        await ctx.model.Fulin.SkuList.create(data1);
+
+      } else {
+        await ctx.model.Fulin.SkuList.update({
+          ...data,
+        }, {
+          where: {
+            local_sku_sid: item.local_sku + '_' + item.sid,
+          },
+        });
+      }
+
 
     }
 

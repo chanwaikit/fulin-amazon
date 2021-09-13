@@ -19,14 +19,17 @@ module.exports = appInfo => {
     },
   };
 
+  config.workerStartTimeout = 10 * 60 * 1000 * 144;
+
+  config.serverTimeout = null;
 
   config.sequelize = {
     dialect: 'mysql',
-    host: '127.0.0.1',
+    host: '39.108.231.99',
     port: 3306,
-    database: 'learn-mysql',
-    username: 'root',
-    password: '88888888',
+    database: 'fulin_amazon',
+    username: 'luke',
+    password: '1234',
   };
   config.security = {
     csrf: false,

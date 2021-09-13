@@ -2,7 +2,7 @@
 
 module.exports = app => {
   const { STRING, INTEGER, DATE } = app.Sequelize;
-  const Sku = app.model.define('shop_list', {
+  const Sku = app.model.define('local_shop_list', {
     sid: { type: INTEGER, primaryKey: true, autoIncrement: true },
     country: STRING(30),
     currency_code: STRING(30),

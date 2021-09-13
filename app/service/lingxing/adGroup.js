@@ -2,10 +2,11 @@
 // app/service/user.js
 const Service = require('egg').Service;
 class UserService extends Service {
-  async fetch() {
+  async fetch(authToken) {
     const { ctx } = this;
     const shopList = await ctx.model.Fulin.ShopList.findAll();
-    const authToken = ctx.cookies.get('auth-token');
+    // const authToken = ctx.cookies.get('auth-token');
+    // console.log(9, authToken);
     const pResult = [];
     for (let i = 0; i < shopList.length; i++) {
       const result = await ctx.curl('https://fulintech.lingxing.com/api/advertising/ads_portfolio/selectItems', {
@@ -24,6 +25,7 @@ class UserService extends Service {
         dataType: 'json',
       });
 
+      // console.log(27, result);
       const resultArray = result.data.data.list;
 
       for (let j = 0; j < resultArray.length; j++) {
@@ -70,10 +72,10 @@ class UserService extends Service {
 
           }
 
-          const profitObj = await ctx.model.Fulin.SbGroup.findByPk(obj.portfolio_id);
+          const profitObj = await ctx.model.Fulin.LocalSkuMidSbGroup.findByPk(obj.portfolio_id);
 
           if (!profitObj) {
-            await ctx.model.Fulin.SbGroup.create(obj);
+            await ctx.model.Fulin.LocalSkuMidSbGroup.create(obj);
           }
           pResult.push(obj);
         }

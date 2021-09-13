@@ -2,7 +2,7 @@
 
 module.exports = app => {
   const { STRING, INTEGER, DATE } = app.Sequelize;
-  const Sku = app.model.define('sp_group', {
+  const Sku = app.model.define('local_sku_mid_sp_group', {
     portfolio_id: { type: STRING, primaryKey: true, autoIncrement: true },
     name: STRING(30),
     profile_id: STRING(30),

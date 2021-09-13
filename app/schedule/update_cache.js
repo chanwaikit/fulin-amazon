@@ -9,14 +9,72 @@ class UpdateCache extends Subscription {
   // 通过 schedule 属性来设置定时任务的执行间隔等配置
   static get schedule() {
     return {
-      interval: '10m', // 1 分钟间隔
+      interval: '1440m', // 1 分钟间隔
       type: 'all', // 指定所有的 worker 都需要执行
     };
   }
 
   // subscribe 是真正定时任务执行时被运行的函数
+
+  async getCookie() {
+    const ctx = this.ctx;
+    const result = await ctx.curl('https://fulintech.lingxing.com/api/passport/login', {
+      // 必须指定 method
+      method: 'POST',
+      // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
+      contentType: 'json',
+      data: {
+        account: '13530178494',
+        auto_login: 1,
+        pwd: 'abc123',
+        req_time_sequence: '/api/passport/login$$1',
+        uuid: 'da91fd94-ba7f-437d-8d97-9cfa319b9d6c',
+        verify_code: '',
+      },
+      // 明确告诉 HttpClient 以 JSON 格式处理返回的响应 body
+      dataType: 'json',
+    });
+    const authToken = result.headers['set-cookie'][0].split(';')[0].slice(11);
+
+
+    console.log(40, authToken);
+    ctx.state.authToken = authToken;
+    ctx.cookies.set('auth-token', authToken);
+  }
+
   async subscribe() {
-    // const { ctx } = this;
+    console.log('自动调接口');
+
+    const { ctx } = this;
+
+    // if (!ctx.cookies.get('auth-token')) {
+    //   await this.getCookie();
+    // }
+    // ctx.cookies.set('auth-token', 1233444);
+    // console.log(54, ctx.cookies.set('auth-token', 1233444));
+    // if (!ctx.state.authToken) {
+    //   await this.getCookie();
+    // }
+    // setInterval(() => {
+    //   console.log(ctx.state);
+    // }, 5000);
+    const token = '3566oUI%2B6uvF3tx8J5fTkPtfDakgOIvVL70fQ%2B8rF0REWObh%2BOOdFrfcg5CEjsEWZwsCueRV7kAWPCEKDIi%2FGu3ywQubvqIPS%2Fy5WjGi2ipkzzSYu08';
+    ctx.state.authToken = token;
+
+    // window.authToken = token;
+    // await ctx.service.lingxing.category.fetch(token);
+    // await ctx.service.lingxing.shop.fetch(token);
+    // await ctx.service.lingxing.adGroup.fetch(token);
+
+    // await ctx.service.lingxing.spCampaign.fetch(token);
+    // await ctx.service.lingxing.sbCampaign.fetch(token);
+    // await ctx.service.lingxing.sdCampaign.fetch(token);
+    // await ctx.service.lingxing.sku.getSkuMid(token);
+    await ctx.service.lingxing.sku.getSkuMidProfit(token);
+
+    const ms = new Date().getTime();
+    console.log(dayjs(ms).format('YYYY-MM-DD HH:mm:ss'));
+    // console.log(1, data);
     // const time = new Date().getTime();
     // const time_str = dayjs(time).format('YYYY-MM-DD HH:mm:ss');
     // console.log('捕捉时间', time_str);

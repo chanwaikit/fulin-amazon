@@ -9,7 +9,7 @@ class UserService extends Service {
   async updateAdGroup() {
     const { ctx } = this;
 
-    const { sbGroups = [], spGroups = [], local_sku_mid = '', mid, cid, category_text } = ctx.request.body;
+    const { sbGroups = [], spGroups = [], local_sku_mid = '', cid, category_text } = ctx.request.body;
     let sbGroupList = await ctx.model.Fulin.LocalSkuMidSbGroup.findAll();
 
 
@@ -63,6 +63,8 @@ class UserService extends Service {
 
     return sbGroups;
   }
+
+
   async fetch() {
     const { ctx } = this;
     const sbGroupTable = ctx.model.Fulin.LocalSkuMidSbGroup;

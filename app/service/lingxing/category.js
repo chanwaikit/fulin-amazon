@@ -6,7 +6,7 @@ const Service = require('egg').Service;
 class UserService extends Service {
   async fetch() {
     const { ctx } = this;
-    const authToken = ctx.cookies.get('auth-token');
+    // const authToken = ctx.cookies.get('auth-token');
 
 
     const result = await ctx.curl('https://fulintech.lingxing.com/sc/data/local_inventory/category', {

@@ -11,25 +11,14 @@ class UserService extends Service {
     const sbGroupTable = ctx.model.Fulin.LocalSkuMidSbGroup;
     const spGroupTable = ctx.model.Fulin.SpGroup;
 
-    const sbCampaignTable = ctx.model.Fulin.SbCampaign;
     const LocalSkuMidList = ctx.model.Fulin.LocalSkuMidList;
     let shopList = await ctx.model.Fulin.ShopList.findAll();
 
-    const { startDate, endDate } = ctx.request.body;
 
     let Sku = await LocalSkuMidList.findAll({
       include: [
         {
           model: sbGroupTable,
-          // include: [{
-          //   model: sbCampaignTable,
-          //   where: {
-          //     date_str: {
-          //       [Op.between]: [ startDate, endDate ],
-          //     },
-          //   },
-          //   required: false,
-          // }],
           required: false,
 
         },
@@ -43,8 +32,6 @@ class UserService extends Service {
     });
     Sku = Sku.map(el => el.get({ plain: true }));
     shopList = shopList.map(el => el.get({ plain: true }));
-    const result = [];
-    const arrayObj = {};
     const pSku = [];
     Sku.map(item => {
       const pSbGroups = [];

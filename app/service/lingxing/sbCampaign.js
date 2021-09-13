@@ -6,12 +6,12 @@ const Service = require('egg').Service;
 class UserService extends Service {
   async fetch() {
     const { ctx } = this;
-    const adGroup = await ctx.model.Fulin.SbGroup.findAll();
-    const authToken = ctx.cookies.get('auth-token');
+    const adGroup = await ctx.model.Fulin.LocalSkuMidSbGroup.findAll();
+    const authToken = ctx.state.authToken;
     const pResult = [];
     const nowTime = new Date().getTime();
-    for (let k = 0; k < 450; k++) {
-      console.log(14, k);
+    for (let k = 0; k < 15; k++) {
+      // console.log(14, k);
       for (let i = 0; i < adGroup.length; i++) {
         const date_str = dayjs(nowTime - 24 * 60 * 60 * 1000 * k).format('YYYY-MM-DD');
         const result = await ctx.curl('https://fulintech.lingxing.com/api/ads_sb_campaign/listSbCampaigns', {
