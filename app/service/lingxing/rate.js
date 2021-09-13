@@ -6,9 +6,11 @@ const Service = require('egg').Service;
 const { QueryTypes, Op } = require('sequelize');
 
 class UserService extends Service {
-  async getRate() {
+  async getRate(authToken) {
     const { ctx } = this;
-    const authToken = ctx.cookies.get('auth-token');
+    // const authToken = ctx.cookies.get('auth-token');
+    const ms = new Date().getTime();
+    const date = dayjs(ms).format('YYYY-MM');
     const data = await ctx.curl('https://fulintech.lingxing.com/api/currency/lists', {
       // 必须指定 method
       method: 'GET',
@@ -18,7 +20,7 @@ class UserService extends Service {
         cookie: 'auth-token=' + authToken,
       },
       data: {
-        date: '2021-06',
+        date,
         req_time_sequence: '/api/currency/lists$$5',
 
       },
