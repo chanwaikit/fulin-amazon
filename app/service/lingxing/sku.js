@@ -178,7 +178,6 @@ class UserService extends Service {
       data.sp_orders += Number(item.total_order_quantity || 0);
       data.sp_sales_amount += Number(item.total_sales_amount || 0);
       data.sp_cost += Number(item.total_cost || 0);
-      data.sp_impressions += Number(item.total_impressions || 0);
 
     });
 
@@ -188,7 +187,6 @@ class UserService extends Service {
       data.sd_orders += Number(item.total_order_quantity || 0);
       data.sd_sales_amount += Number(item.total_sales_amount || 0);
       data.sd_cost += Number(item.total_cost || 0);
-      data.sd_impressions += Number(item.total_impressions || 0);
 
     });
     return data;
@@ -316,7 +314,7 @@ class UserService extends Service {
     let allLocalSku = await ctx.model.Fulin.LocalSkuMidList.findAll(); // 先拿到总的sku
     allLocalSku = allLocalSku.map(el => el.get({ plain: true }));
     const nowMs = dayjs().valueOf();
-    for (let t = 0; t < 60; t++) {
+    for (let t = 0; t < 15; t++) {
       const date_str = dayjs(nowMs - t * 60 * 60 * 24 * 1000).format('YYYY-MM-DD');
       const result = [];
       // console.log('315-------------------------', t);

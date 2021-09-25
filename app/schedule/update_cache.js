@@ -40,6 +40,7 @@ class UpdateCache extends Subscription {
     console.log(40, authToken);
     ctx.state.authToken = authToken;
     ctx.cookies.set('auth-token', authToken);
+    return authToken;
   }
 
   async subscribe() {
@@ -58,10 +59,12 @@ class UpdateCache extends Subscription {
     // setInterval(() => {
     //   console.log(ctx.state);
     // }, 5000);
-    const token = '3566oUI%2B6uvF3tx8J5fTkPtfDakgOIvVL70fQ%2B8rF0REWObh%2BOOdFrfcg5CEjsEWZwsCueRV7kAWPCEKDIi%2FGu3ywQubvqIPS%2Fy5WjGi2ipkzzSYu08';
+
+
+    // 09-22
+    const token = await this.getCookie();
     ctx.state.authToken = token;
 
-    // window.authToken = token;
     await ctx.service.lingxing.category.fetch(token);
     await ctx.service.lingxing.shop.fetch(token);
     await ctx.service.lingxing.adGroup.fetch(token);
@@ -75,6 +78,8 @@ class UpdateCache extends Subscription {
 
     const ms = new Date().getTime();
     console.log(dayjs(ms).format('YYYY-MM-DD HH:mm:ss'));
+    // 09-22
+
     // console.log(1, data);
     // const time = new Date().getTime();
     // const time_str = dayjs(time).format('YYYY-MM-DD HH:mm:ss');

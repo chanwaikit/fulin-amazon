@@ -43,9 +43,9 @@ class UserService extends Service {
       dataType: 'json',
     });
 
+    console.log(result);
 
     const resultArray = result.data.list;
-
     for (let i = 0; i < resultArray.length; i++) {
       const obj = {
         ...resultArray[i],
