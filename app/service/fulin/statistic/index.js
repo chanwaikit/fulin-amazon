@@ -155,7 +155,7 @@ class UserService extends Service {
           const ad_cost = Number(profit.sp_cost || 0) + Number(profit.sb_cost || 0) + Number(profit.sbv_cost || 0) + Number(profit.sd_cost || 0);
           const ad_orders = Number(profit.sp_orders || 0) + Number(profit.sb_orders || 0) + Number(profit.sbv_orders || 0) + Number(profit.sd_orders || 0);
           const ad_clicks = Number(profit.sp_clicks || 0) + Number(profit.sb_clicks || 0) + Number(profit.sbv_clicks || 0) + Number(profit.sd_clicks || 0);
-          const ad_impressions = Number(profit.sp_clicks || 0) + Number(profit.sb_impressions || 0) + Number(profit.sbv_impressions || 0) + Number(profit.sd_impressions || 0);
+          const ad_impressions = Number(profit.sp_impressions || 0) + Number(profit.sb_impressions || 0) + Number(profit.sbv_impressions || 0) + Number(profit.sd_impressions || 0);
           const gross_profit = Number(profit.total_amount || 0) + Number(profit.refund_amount || 0) + Number(profit.channel_fee || 0) + Number(profit.commission_amount || 0) + Number(profit.promotion_amount || 0) + Number(profit.total_cg_price || 0) + Number(profit.total_cg_transport_costs || 0) + Number(profit.other_order_fee || 0) - ad_cost;
 
 
