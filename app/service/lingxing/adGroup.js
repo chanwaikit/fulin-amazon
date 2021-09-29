@@ -76,6 +76,13 @@ class UserService extends Service {
 
           if (!profitObj) {
             await ctx.model.Fulin.LocalSkuMidSbGroup.create(obj);
+          } else {
+            await ctx.model.Fulin.LocalSkuMidSbGroup.update(obj, {
+              where: {
+                portfolio_id: obj.portfolio_id,
+              },
+            });
+
           }
           pResult.push(obj);
         }
@@ -107,6 +114,7 @@ class UserService extends Service {
           dataType: 'json',
         });
 
+
         if (spResult.data.total > 0) { // 广告分组里头有活动的，才列为SB或者SBV的广告组合
           const obj = {
             sid: shopList[i].sid,
@@ -116,8 +124,21 @@ class UserService extends Service {
 
           obj.type = 'sp';
           const profitObj = await ctx.model.Fulin.SpGroup.findByPk(obj.portfolio_id);
+
+          // if (resultArray[j].portfolio_id == 137007384486636) {
+          //   console.log(122, profitObj.dataValues);
+          // }
+
+
           if (!profitObj) {
             await ctx.model.Fulin.SpGroup.create(obj);
+          } else {
+            await ctx.model.Fulin.SpGroup.update(obj, {
+              where: {
+                portfolio_id: obj.portfolio_id,
+              },
+            });
+
           }
 
 
