@@ -314,7 +314,7 @@ class UserService extends Service {
     let allLocalSku = await ctx.model.Fulin.LocalSkuMidList.findAll(); // 先拿到总的sku
     allLocalSku = allLocalSku.map(el => el.get({ plain: true }));
     const nowMs = dayjs().valueOf();
-    for (let t = 0; t < 15; t++) {
+    for (let t = 0; t < 365; t++) {
       const date_str = dayjs(nowMs - t * 60 * 60 * 24 * 1000).format('YYYY-MM-DD');
       const result = [];
       // console.log('315-------------------------', t);
@@ -391,6 +391,33 @@ class UserService extends Service {
       // console.log('388-------------------------', result);
 
       await ctx.model.Fulin.LocalSkuMidProfitList.bulkCreate(result, { updateOnDuplicate: updateArrayKey });
+
+
+      // await ctx.model.Fulin.DailyRecord.bulkCreate([{
+      //   date_str,
+      //   update_date_str: dayjs(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss'),
+      // }], { updateOnDuplicate: [
+      //   'date_str',
+      //   'update_date_str',
+      // ] });
+
+      const dateObj = {
+        date_str,
+        update_date_str: dayjs(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss'),
+      };
+
+      const profitObj = await ctx.model.Fulin.DailyRecord.findByPk(dateObj.date_str);
+      if (!profitObj) {
+        await ctx.model.Fulin.DailyRecord.create(dateObj);
+      } else {
+        await ctx.model.Fulin.DailyRecord.update(dateObj, {
+          where: {
+            date_str,
+          },
+        });
+
+      }
+
 
       // if (!obj) {
       //   await ctx.model.Fulin.LocalSkuMidDate.create(data);
