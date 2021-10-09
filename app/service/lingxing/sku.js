@@ -314,7 +314,7 @@ class UserService extends Service {
     let allLocalSku = await ctx.model.Fulin.LocalSkuMidList.findAll(); // 先拿到总的sku
     allLocalSku = allLocalSku.map(el => el.get({ plain: true }));
     const nowMs = dayjs().valueOf();
-    for (let t = 0; t < 14; t++) {
+    for (let t = 0; t < 365; t++) {
       const date_str = dayjs(nowMs - t * 60 * 60 * 24 * 1000).format('YYYY-MM-DD');
       const result = [];
       // console.log('315-------------------------', t);
