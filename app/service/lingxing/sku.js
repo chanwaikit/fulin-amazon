@@ -30,7 +30,7 @@ class UserService extends Service {
         search_field: 'local_sku',
         search_value: local_sku,
         sids: '',
-        sort_field: 'volume',
+        sort_field: 'sessions',
         sort_type: 'desc',
         start_date: date_str,
       },
@@ -45,9 +45,9 @@ class UserService extends Service {
     const productArray = productResult.data.list || [];
     productArray.map(item => {
       data.volume += Number(item.volume || 0);
-      data.sessions += Number(item.sessions || 0);
+      // data.sessions += Number(item.sessions || 0);
     });
-    data.sessions = parseInt(data.sessions / ((productArray.filter(item => item.sessions > 0).length || 1)));
+    data.sessions = Number(productArray[0].sessions || 0);
     return data;
   }
   async getProfit(local_sku, mid, date_str, sku = {}) {
