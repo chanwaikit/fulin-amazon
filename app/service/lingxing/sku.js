@@ -26,7 +26,7 @@ class UserService extends Service {
         mids: mid,
         offset: '0',
         principal_uids: '',
-        req_time_sequence: '/api/report/asinLists$$13',
+        req_time_sequence: '/api/report/asinLists$$4',
         search_field: 'local_sku',
         search_value: local_sku,
         sids: '',
@@ -54,28 +54,41 @@ class UserService extends Service {
     const { ctx } = this;
     // const authToken = ctx.cookies.get('auth-token');
     const authToken = ctx.state.authToken;
-
-    const profitResult = await ctx.curl('https://fulintech.lingxing.com/api/report/profitAsin', {
+    // console.log(57, authToken);
+    const profitResult = await ctx.curl(`https://fulintech.lingxing.com/api/report/profitAsin?offset=0&length=200&sort_field=total_volume&sort_type=desc&mids=${mid}&sids=&cid=&bid=&start_date=${date_str}&end_date=${date_str}&currency_type=0&type=0&search_value=${local_sku}&is_merge=0&req_time_sequence=%2Fapi%2Freport%2FprofitAsin$$7`, {
       // 必须指定 method
-      method: 'POST',
+      method: 'GET',
       // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
-      contentType: 'json',
+      contentType: 'application/json',
       headers: {
         cookie: 'auth-token=' + authToken,
       },
-      data: {
-        offset: 0,
-        length: 10000,
-        sort_field: 'total_volume',
-        sort_type: 'desc',
-        start_date: date_str,
-        end_date: date_str,
-        currency_type: '0',
-        search_value: local_sku,
-        mids: mid,
-        type: '0',
-        req_time_sequence: '/api/report/profitAsin$$2',
-      },
+      // data: {
+      //   // offset: 0,
+      //   // length: 200,
+      //   // sort_field: 'total_volume',
+      //   // sort_type: 'desc',
+      //   // start_date: date_str,
+      //   // end_date: date_str,
+      //   // currency_type: '0',
+      //   // search_value: local_sku,
+      //   // mids: mid,
+      //   // type: '0',
+      //   // is_merge: '0',
+      //   // req_time_sequence: '/api/report/profitAsin$$11',
+
+      //   // offset: 0,
+      //   // length: 200,
+      //   // sort_field: 'total_volume',
+      //   // sort_type: 'desc',
+      //   // start_date: '2021-11-02',
+      //   // end_date: '2021-11-02',
+      //   // currency_type: 2,
+      //   // type: 0,
+      //   // search_value: 'LM-166_Gold_US_FURIDEN',
+      //   // is_merge: 0,
+      //   // req_time_sequence: '/api/report/profitAsin$$29',
+      // },
       // 明确告诉 HttpClient 以 JSON 格式处理返回的响应 body
       dataType: 'json',
     });
@@ -132,6 +145,10 @@ class UserService extends Service {
       data.date_str = date_str;
       // data.icon = item.icon;
     });
+
+    // if (local_sku == 'LM-166_Gold_US_FURIDEN') {
+    // console.log(138, profitResult);
+    // }
     return data;
   }
   async getSpSd(local_sku, mid, date_str) {
@@ -445,25 +462,26 @@ class UserService extends Service {
     const end_date = dayjs(nowTime - 24 * 60 * 60 * 1000).format('YYYY-MM-DD');
     const start_date = dayjs(nowTime - 365 * 24 * 60 * 60 * 1000).format('YYYY-MM-DD');
     // console.log(start_date, end_date);
-    const result = await ctx.curl('https://fulintech.lingxing.com/api/report/profitAsin', {
+    const result = await ctx.curl(`https://fulintech.lingxing.com/api/report/profitAsin?offset=0&length=200&sort_field=total_volume&sort_type=desc&mids=&sids=&cid=&bid=&start_date=${start_date}&end_date=${end_date}&currency_type=0&type=0&search_value=&is_merge=0&req_time_sequence=%2Fapi%2Freport%2FprofitAsin$$7`, {
       // 必须指定 method
-      method: 'POST',
+      method: 'GET',
       // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
       contentType: 'json',
       headers: {
         cookie: 'auth-token=' + authToken,
       },
-      data: {
-        offset: 0,
-        length: 10000,
-        sort_field: 'total_volume',
-        sort_type: 'desc',
-        start_date,
-        end_date,
-        currency_type: '0',
-        type: '0',
-        req_time_sequence: '/api/report/profitAsin$$2',
-      },
+      // data: {
+      //   offset: 0,
+      //   length: 10000,
+      //   sort_field: 'total_volume',
+      //   sort_type: 'desc',
+      //   start_date,
+      //   end_date,
+      //   currency_type: '0',
+      //   type: '0',
+      //   is_merge: '0',
+      //   req_time_sequence: '/api/report/profitAsin$$11',
+      // },
       // 明确告诉 HttpClient 以 JSON 格式处理返回的响应 body
       dataType: 'json',
     });
