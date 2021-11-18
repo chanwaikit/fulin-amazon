@@ -19,18 +19,19 @@ class UserService extends Service {
         cookie: 'auth-token=' + authToken,
       },
       data: {
-        asin_type: '0',
-        currency_type: '0',
+        currency_type: '',
         end_date: date_str,
         length: 200,
         mids: mid,
         offset: '0',
-        principal_uids: '',
+        principal_uids: [],
         req_time_sequence: '/api/report/asinLists$$4',
         search_field: 'local_sku',
         search_value: local_sku,
         sids: '',
         sort_field: 'sessions',
+        summary_field: "asin",
+        turn_on_summary: "0",
         sort_type: 'desc',
         start_date: date_str,
       },
@@ -47,7 +48,7 @@ class UserService extends Service {
       data.volume += Number(item.volume || 0);
       // data.sessions += Number(item.sessions || 0);
     });
-    data.sessions = Number(productArray[0].sessions || 0);
+    data.sessions = productArray[0] ? Number(productArray[0].sessions || 0) : 0;
     return data;
   }
   async getProfit(local_sku, mid, date_str, sku = {}) {
@@ -330,8 +331,8 @@ class UserService extends Service {
 
     let allLocalSku = await ctx.model.Fulin.LocalSkuMidList.findAll(); // 先拿到总的sku
     allLocalSku = allLocalSku.map(el => el.get({ plain: true }));
-    const nowMs = dayjs().valueOf();
-    for (let t = 0; t < 15; t++) {
+    const nowMs = dayjs().valueOf() - 3 * 60 * 60 * 24 * 1000;
+    for (let t = 0; t < 9; t++) {
       const date_str = dayjs(nowMs - t * 60 * 60 * 24 * 1000).format('YYYY-MM-DD');
       const result = [];
       // console.log('315-------------------------', t);
