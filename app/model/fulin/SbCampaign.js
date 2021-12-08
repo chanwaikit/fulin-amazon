@@ -14,6 +14,7 @@ module.exports = app => {
     portfolio_id: STRING(30),
     group_name: STRING(30),
     date_str: STRING(30),
+    teika_cost: STRING(30),
   }, {
     timestamps: false,
   });

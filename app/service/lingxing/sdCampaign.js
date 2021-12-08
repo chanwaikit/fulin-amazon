@@ -9,11 +9,17 @@ class UserService extends Service {
     const SkuList = await ctx.model.Fulin.SkuList.findAll();
     const ShopList = await ctx.model.Fulin.ShopList.findAll();
 
+    let sids = [];
+    ShopList.map(element => {
+      if(element.teika_open == 1){
+        sids.push(Number(element.sid))
+      }
+    })  
 
     const authToken = ctx.state.authToken;
     const pResult = [];
     const nowTime = new Date().getTime();
-    for (let k = 0; k < 14; k++) {
+    for (let k = 0; k < 30; k++) {
       // console.log(14, k);
       for (let i = 0; i < SkuList.length; i++) {
         const date_str = dayjs(nowTime - 24 * 60 * 60 * 1000 * k).format('YYYY-MM-DD');
@@ -80,6 +86,11 @@ class UserService extends Service {
             currency_code: shopObj.currency_code,
             date_str,
           };
+
+          if(sids.indexOf(Number(SkuList[i].sid))> -1 ){
+            obj.teika_cost = ((obj.total_cost || 0) * 0.03).toFixed(2)
+          }
+
           const profitObj = await ctx.model.Fulin.SdCampaign.findByPk(obj.id);
           if (!profitObj) {
             await ctx.model.Fulin.SdCampaign.create(obj);

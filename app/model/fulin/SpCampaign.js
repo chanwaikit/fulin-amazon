@@ -18,6 +18,7 @@ module.exports = app => {
     local_sku_sid: STRING(30),
     local_name: STRING(30),
     sid: STRING(30),
+    teika_cost: STRING(30),
   }, {
     timestamps: false,
   });

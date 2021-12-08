@@ -7,10 +7,20 @@ class UserService extends Service {
   async fetch() {
     const { ctx } = this;
     const adGroup = await ctx.model.Fulin.LocalSkuMidSbGroup.findAll();
+    const shopList = await ctx.model.Fulin.ShopList.findAll();
+
+    let sids = [];
+    shopList.map(element => {
+      if(element.teika_open == 1){
+        sids.push(Number(element.sid))
+      }
+    })  
+    console.log(sids)
+
     const authToken = ctx.state.authToken;
     const pResult = [];
     const nowTime = new Date().getTime();
-    for (let k = 0; k < 14; k++) {
+    for (let k = 0; k < 30; k++) {
       // console.log(14, k);
       for (let i = 0; i < adGroup.length; i++) {
         const date_str = dayjs(nowTime - 24 * 60 * 60 * 1000 * k).format('YYYY-MM-DD');
@@ -55,6 +65,13 @@ class UserService extends Service {
             group_name: adGroup[i].dataValues.name,
             date_str,
           };
+
+
+          if(sids.indexOf(Number(adGroup[i].dataValues.sid))> -1 ){
+            obj.teika_cost = (obj.cost * 0.03).toFixed(2)
+          }
+
+
           const profitObj = await ctx.model.Fulin.SbCampaign.findByPk(obj.id);
           if (!profitObj) {
             await ctx.model.Fulin.SbCampaign.create(obj);

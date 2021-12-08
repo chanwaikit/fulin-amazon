@@ -30,8 +30,8 @@ class UserService extends Service {
         search_value: local_sku,
         sids: '',
         sort_field: 'sessions',
-        summary_field: "asin",
-        turn_on_summary: "0",
+        summary_field: 'asin',
+        turn_on_summary: '0',
         sort_type: 'desc',
         start_date: date_str,
       },
@@ -183,12 +183,14 @@ class UserService extends Service {
       sp_orders: 0,
       sp_sales_amount: 0,
       sp_cost: 0,
+      sp_teika_cost:0,
 
       sd_clicks: 0,
       sd_impressions: 0,
       sd_orders: 0,
       sd_sales_amount: 0,
       sd_cost: 0,
+      sd_teika_cost:0
     };
     SpCampaign.map(item => {
       data.sp_clicks += Number(item.total_clicks || 0);
@@ -196,6 +198,7 @@ class UserService extends Service {
       data.sp_orders += Number(item.total_order_quantity || 0);
       data.sp_sales_amount += Number(item.total_sales_amount || 0);
       data.sp_cost += Number(item.total_cost || 0);
+      data.sp_teika_cost += Number(item.teika_cost || 0);
 
     });
 
@@ -205,7 +208,7 @@ class UserService extends Service {
       data.sd_orders += Number(item.total_order_quantity || 0);
       data.sd_sales_amount += Number(item.total_sales_amount || 0);
       data.sd_cost += Number(item.total_cost || 0);
-
+      data.sd_teika_cost += Number(item.teika_cost || 0);
     });
     return data;
   }
@@ -246,6 +249,7 @@ class UserService extends Service {
       sbv_impressions: 0,
       sbv_orders: 0,
       sbv_sales_amount: 0,
+      sbv_teika_cost: 0
     };
     const sbObj = {
       sb_clicks: 0,
@@ -254,6 +258,7 @@ class UserService extends Service {
       sb_impressions: 0,
       sb_orders: 0,
       sb_sales_amount: 0,
+      sb_teika_cost:0
     };
     if (localSkuObj && localSkuObj.local_sku_mid_sb_groups.length > 0) {
       for (let e = 0; e < localSkuObj.local_sku_mid_sb_groups.length; e++) {
@@ -265,6 +270,7 @@ class UserService extends Service {
           currency_code = '',
           impressions = 0,
           order_num = 0,
+          teika_cost=0,
           sales_amount = 0;
 
         for (let i = 0; i < element.sb_campaigns.length; i++) {
@@ -275,6 +281,7 @@ class UserService extends Service {
           impressions += Number(sbItem.impressions);
           order_num += Number(sbItem.order_num);
           sales_amount += Number(sbItem.sales_amount);
+          teika_cost += Number(sbItem.teika_cost);
         }
 
         let total_volume = 0;
@@ -288,6 +295,7 @@ class UserService extends Service {
           sbvObj.sbv_impressions += Number(impressions || 0);
           sbvObj.sbv_orders += Number(order_num || 0);
           sbvObj.sbv_sales_amount += Number(sales_amount || 0);
+          sbvObj.sbv_teika_cost += Number(teika_cost || 0);
 
         } else {
 
@@ -315,6 +323,8 @@ class UserService extends Service {
           sbObj.sb_impressions += Number(impressions || 0) * ratio;
           sbObj.sb_orders += Number(order_num || 0) * ratio;
           sbObj.sb_sales_amount += Number(sales_amount || 0) * ratio;
+          sbObj.sb_teika_cost += Number(teika_cost || 0) * ratio;
+
         }
       }
 
@@ -332,7 +342,7 @@ class UserService extends Service {
     let allLocalSku = await ctx.model.Fulin.LocalSkuMidList.findAll(); // 先拿到总的sku
     allLocalSku = allLocalSku.map(el => el.get({ plain: true }));
     const nowMs = dayjs().valueOf();
-    for (let t = 0; t < 15; t++) {
+    for (let t = 0; t < 30; t++) {
       const date_str = dayjs(nowMs - t * 60 * 60 * 24 * 1000).format('YYYY-MM-DD');
       const result = [];
       // console.log('315-------------------------', t);
@@ -385,24 +395,29 @@ class UserService extends Service {
         'sp_orders',
         'sp_sales_amount',
         'sp_cost',
+        'sp_teika_cost',
 
         'sd_clicks',
         'sd_impressions',
         'sd_orders',
         'sd_sales_amount',
         'sd_cost',
+        'sd_teika_cost',
 
         'sb_clicks',
         'sb_impressions',
         'sb_orders',
         'sb_sales_amount',
         'sb_cost',
+        'sb_teika_cost',
 
         'sbv_clicks',
         'sbv_impressions',
         'sbv_orders',
         'sbv_sales_amount',
         'sbv_cost',
+        'sbv_teika_cost',
+
       ];
 
 

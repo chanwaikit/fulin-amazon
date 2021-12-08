@@ -15,6 +15,7 @@ module.exports = app => {
     profile_id: STRING(30),
     region: STRING(30),
     timezone: STRING(30),
+    teika_open: STRING(30),
   }, {
     timestamps: false,
   });

@@ -33,24 +33,30 @@ module.exports = app => {
     sp_orders: STRING(30),
     sp_sales_amount: STRING(30),
     sp_cost: STRING(30),
+    sp_teika_cost: STRING(30),
+
 
     sd_clicks: STRING(30),
     sd_impressions: STRING(30),
     sd_orders: STRING(30),
     sd_sales_amount: STRING(30),
     sd_cost: STRING(30),
+    sd_teika_cost: STRING(30),
 
     sb_clicks: STRING(30),
     sb_impressions: STRING(30),
     sb_orders: STRING(30),
     sb_sales_amount: STRING(30),
     sb_cost: STRING(30),
+    sb_teika_cost: STRING(30),
 
     sbv_clicks: STRING(30),
     sbv_impressions: STRING(30),
     sbv_orders: STRING(30),
     sbv_sales_amount: STRING(30),
     sbv_cost: STRING(30),
+    sbv_teika_cost: STRING(30),
+
   }, {
     timestamps: false,
   });
