@@ -65,14 +65,14 @@ class UpdateCache extends Subscription {
     const token = await this.getCookie();
     ctx.state.authToken = token;
 
-    // await ctx.service.lingxing.category.fetch(token);
-    // await ctx.service.lingxing.shop.fetch(token);
-    // await ctx.service.lingxing.adGroup.fetch(token);
-    // await ctx.service.lingxing.rate.getRate(token);
+    await ctx.service.lingxing.category.fetch(token);
+    await ctx.service.lingxing.shop.fetch(token);
+    await ctx.service.lingxing.adGroup.fetch(token);
+    await ctx.service.lingxing.rate.getRate(token);
 
-    // await ctx.service.lingxing.spCampaign.fetch(token);
-    // await ctx.service.lingxing.sbCampaign.fetch(token);
-    // await ctx.service.lingxing.sdCampaign.fetch(token);
+    await ctx.service.lingxing.spCampaign.fetch(token);
+    await ctx.service.lingxing.sbCampaign.fetch(token);
+    await ctx.service.lingxing.sdCampaign.fetch(token);
     await ctx.service.lingxing.sku.getSkuMid(token);
     await ctx.service.lingxing.sku.getSkuMidProfit(token);
 
