@@ -9,7 +9,7 @@ class UserService extends Service {
     // const authToken = ctx.cookies.get('auth-token');
 
 
-    const result = await ctx.curl('https://fulintech.lingxing.com/sc/data/local_inventory/category', {
+    const result = await ctx.curl('https://fulintech.lingxing.com/sc/routing/data/local_inventory/category', {
       // 必须指定 method
       method: 'GET',
       // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
@@ -28,7 +28,6 @@ class UserService extends Service {
     });
 
     const categorys = result.data.data;
-
 
     await ctx.model.Fulin.Category.bulkCreate(categorys, { updateOnDuplicate: [ 'cid' ] });
 

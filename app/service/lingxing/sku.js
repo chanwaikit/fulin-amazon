@@ -522,11 +522,11 @@ class UserService extends Service {
         mid: shopObj[item.marketplace],//item.mid,
         local_name: item.local_name,
         country: item.marketplace,
-        cid: item.cid[0],
-        category_text: item.category_text[0],
+        cid: item.cid,
+        category_text: item.category_text,
         code: item.code,
         icon: item.icon,
-        bid: item.bid[0],
+        bid: item.bid,
       };
       if (!obj) {
         await ctx.model.Fulin.LocalSkuMidList.create(data);
@@ -553,11 +553,11 @@ class UserService extends Service {
         sid: item.sid,
         mid: shopObj[item.marketplace],//item.mid,
         country: item.marketplace,
-        cid: item.cid[0],
-        category_text: item.category_text[0],
+        cid: item.cid,
+        category_text: item.category_text,
         code: item.code,
         icon: item.icon,
-        bid: item.bid[0],
+        bid: item.bid,
       };
 
       if (!obj1) {
