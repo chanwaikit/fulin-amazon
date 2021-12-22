@@ -26,10 +26,10 @@ module.exports = appInfo => {
   config.sequelize = {
     dialect: 'mysql',
     host: '39.108.231.99',
-    port: 3306,
+    port: 3402,
     database: 'fulin_amazon',
     username: 'luke',
-    password: '1234',
+    password: 'Fulinluke*',
   };
   config.security = {
     csrf: false,

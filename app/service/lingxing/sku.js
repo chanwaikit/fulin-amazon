@@ -95,6 +95,7 @@ class UserService extends Service {
     });
 
     const profitResultArray = profitResult.data.list || [];
+    // console.log(98,local_sku,mid)
     const data = {
       local_sku_mid_date: local_sku + '_' + mid + '_' + date_str,
       local_sku_mid: local_sku + '_' + mid,
@@ -183,14 +184,14 @@ class UserService extends Service {
       sp_orders: 0,
       sp_sales_amount: 0,
       sp_cost: 0,
-      sp_teika_cost:0,
+      sp_teika_cost: 0,
 
       sd_clicks: 0,
       sd_impressions: 0,
       sd_orders: 0,
       sd_sales_amount: 0,
       sd_cost: 0,
-      sd_teika_cost:0
+      sd_teika_cost: 0,
     };
     SpCampaign.map(item => {
       data.sp_clicks += Number(item.total_clicks || 0);
@@ -249,7 +250,7 @@ class UserService extends Service {
       sbv_impressions: 0,
       sbv_orders: 0,
       sbv_sales_amount: 0,
-      sbv_teika_cost: 0
+      sbv_teika_cost: 0,
     };
     const sbObj = {
       sb_clicks: 0,
@@ -258,7 +259,7 @@ class UserService extends Service {
       sb_impressions: 0,
       sb_orders: 0,
       sb_sales_amount: 0,
-      sb_teika_cost:0
+      sb_teika_cost: 0,
     };
     if (localSkuObj && localSkuObj.local_sku_mid_sb_groups.length > 0) {
       for (let e = 0; e < localSkuObj.local_sku_mid_sb_groups.length; e++) {
@@ -270,7 +271,7 @@ class UserService extends Service {
           currency_code = '',
           impressions = 0,
           order_num = 0,
-          teika_cost=0,
+          teika_cost = 0,
           sales_amount = 0;
 
         for (let i = 0; i < element.sb_campaigns.length; i++) {
@@ -478,6 +479,13 @@ class UserService extends Service {
     const end_date = dayjs(nowTime - 24 * 60 * 60 * 1000).format('YYYY-MM-DD');
     const start_date = dayjs(nowTime - 365 * 24 * 60 * 60 * 1000).format('YYYY-MM-DD');
     // console.log(start_date, end_date);
+    let shopObj = {};
+    const shopList = await ctx.model.Fulin.ShopList.findAll();
+
+    shopList.filter(element => {
+      shopObj[element.country] = element.mid
+    })
+    console.log(444,shopObj['美国'])
     const result = await ctx.curl(`https://fulintech.lingxing.com/api/report/profitAsin?offset=0&length=200&sort_field=total_volume&sort_type=desc&mids=&sids=&cid=&bid=&start_date=${start_date}&end_date=${end_date}&currency_type=0&type=0&search_value=&is_merge=0&req_time_sequence=%2Fapi%2Freport%2FprofitAsin$$7`, {
       // 必须指定 method
       method: 'GET',
@@ -507,11 +515,11 @@ class UserService extends Service {
     // resultArray.map((item)=>{
     for (let i = 0; i < resultArray.length; i++) {
       const item = resultArray[i];
-      const obj = await ctx.model.Fulin.LocalSkuMidList.findByPk(item.local_sku + '_' + item.mid);
+      const obj = await ctx.model.Fulin.LocalSkuMidList.findByPk(item.local_sku + '_' + shopObj[item.marketplace]);
       const data = {
-        local_sku_mid: item.local_sku + '_' + item.mid,
+        local_sku_mid: item.local_sku + '_' + shopObj[item.marketplace],//item.mid,
         local_sku: item.local_sku,
-        mid: item.mid,
+        mid: shopObj[item.marketplace],//item.mid,
         local_name: item.local_name,
         country: item.marketplace,
         cid: item.cid[0],
@@ -528,7 +536,7 @@ class UserService extends Service {
           ...data,
         }, {
           where: {
-            local_sku_mid: item.local_sku + '_' + item.mid,
+            local_sku_mid: item.local_sku + '_' + shopObj[item.marketplace],//item.mid,
           },
         });
       }
@@ -543,7 +551,7 @@ class UserService extends Service {
         asin: item.asin1,
         local_name: item.local_name,
         sid: item.sid,
-        mid: item.mid,
+        mid: shopObj[item.marketplace],//item.mid,
         country: item.marketplace,
         cid: item.cid[0],
         category_text: item.category_text[0],
@@ -584,6 +592,7 @@ class UserService extends Service {
       const shopObj = shopList.filter(element => {
         return result[i].dataValues.sid == element.sid;
       })[0] || {};
+      
       const obj = {
         pid_sid: result[i].dataValues.local_sku_sid,
         asin: result[i].dataValues.asin1,
