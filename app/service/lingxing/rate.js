@@ -18,6 +18,12 @@ class UserService extends Service {
       contentType: 'json',
       headers: {
         cookie: 'auth-token=' + authToken,
+        'x-ak-company-id': '90136223568253440',
+        'x-ak-env-key': 'fulintech',
+        'x-ak-request-id': 'f2ba4047-81b0-4bbc-a759-aa3024d5fc3d',
+        'x-ak-request-source': 'erp',
+        'x-ak-version': '2.8.5.1.2.033',
+        'x-ak-zid': 1,
       },
       data: {
         date,

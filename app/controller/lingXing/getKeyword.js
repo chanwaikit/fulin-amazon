@@ -11,15 +11,23 @@ class ProfitController extends Controller {
       // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
       contentType: 'json',
       data: {
-        account: '13530178494',
+        account: '15919799197',
         auto_login: 1,
-        pwd: 'abc123',
+        pwd: '584621379fulin',
         req_time_sequence: '/api/passport/login$$1',
         uuid: 'da91fd94-ba7f-437d-8d97-9cfa319b9d6c',
         verify_code: '',
       },
       // 明确告诉 HttpClient 以 JSON 格式处理返回的响应 body
       dataType: 'json',
+      headers: {
+        'x-ak-company-id': '90136223568253440',
+        'x-ak-env-key': 'fulintech',
+        'x-ak-request-id': 'f2ba4047-81b0-4bbc-a759-aa3024d5fc3d',
+        'x-ak-request-source': 'erp',
+        'x-ak-version': '2.8.5.1.2.033',
+        'x-ak-zid': 1,
+      },
     });
 
     const authToken = result.headers['set-cookie'][0].split(';')[0].slice(11);
@@ -43,6 +51,12 @@ class ProfitController extends Controller {
       contentType: 'json',
       headers: {
         cookie: 'auth-token=' + authToken,
+        'x-ak-company-id': '90136223568253440',
+        'x-ak-env-key': 'fulintech',
+        'x-ak-request-id': 'f2ba4047-81b0-4bbc-a759-aa3024d5fc3d',
+        'x-ak-request-source': 'erp',
+        'x-ak-version': '2.8.5.1.2.033',
+        'x-ak-zid': 1,
       },
       data: {
         keywords: [{
@@ -167,6 +181,12 @@ class ProfitController extends Controller {
       contentType: 'json',
       headers: {
         cookie: 'auth-token=' + authToken,
+        'x-ak-company-id': '90136223568253440',
+        'x-ak-env-key': 'fulintech',
+        'x-ak-request-id': 'f2ba4047-81b0-4bbc-a759-aa3024d5fc3d',
+        'x-ak-request-source': 'erp',
+        'x-ak-version': '2.8.5.1.2.033',
+        'x-ak-zid': 1,
       },
       data: {
         length: 1000,

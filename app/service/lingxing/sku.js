@@ -17,6 +17,12 @@ class UserService extends Service {
       contentType: 'json',
       headers: {
         cookie: 'auth-token=' + authToken,
+        'x-ak-company-id': '90136223568253440',
+        'x-ak-env-key': 'fulintech',
+        'x-ak-request-id': 'f2ba4047-81b0-4bbc-a759-aa3024d5fc3d',
+        'x-ak-request-source': 'erp',
+        'x-ak-version': '2.8.5.1.2.033',
+        'x-ak-zid': 1,
       },
       data: {
         currency_type: '',
@@ -63,6 +69,12 @@ class UserService extends Service {
       contentType: 'application/json',
       headers: {
         cookie: 'auth-token=' + authToken,
+        'x-ak-company-id': '90136223568253440',
+        'x-ak-env-key': 'fulintech',
+        'x-ak-request-id': 'f2ba4047-81b0-4bbc-a759-aa3024d5fc3d',
+        'x-ak-request-source': 'erp',
+        'x-ak-version': '2.8.5.1.2.033',
+        'x-ak-zid': 1,
       },
       // data: {
       //   // offset: 0,
@@ -479,13 +491,13 @@ class UserService extends Service {
     const end_date = dayjs(nowTime - 24 * 60 * 60 * 1000).format('YYYY-MM-DD');
     const start_date = dayjs(nowTime - 365 * 24 * 60 * 60 * 1000).format('YYYY-MM-DD');
     // console.log(start_date, end_date);
-    let shopObj = {};
+    const shopObj = {};
     const shopList = await ctx.model.Fulin.ShopList.findAll();
 
     shopList.filter(element => {
-      shopObj[element.country] = element.mid
-    })
-    console.log(444,shopObj['美国'])
+      shopObj[element.country] = element.mid;
+    });
+    console.log(444, shopObj['美国']);
     const result = await ctx.curl(`https://fulintech.lingxing.com/api/report/profitAsin?offset=0&length=200&sort_field=total_volume&sort_type=desc&mids=&sids=&cid=&bid=&start_date=${start_date}&end_date=${end_date}&currency_type=0&type=0&search_value=&is_merge=0&req_time_sequence=%2Fapi%2Freport%2FprofitAsin$$7`, {
       // 必须指定 method
       method: 'GET',
@@ -493,6 +505,12 @@ class UserService extends Service {
       contentType: 'json',
       headers: {
         cookie: 'auth-token=' + authToken,
+        'x-ak-company-id': '90136223568253440',
+        'x-ak-env-key': 'fulintech',
+        'x-ak-request-id': 'f2ba4047-81b0-4bbc-a759-aa3024d5fc3d',
+        'x-ak-request-source': 'erp',
+        'x-ak-version': '2.8.5.1.2.033',
+        'x-ak-zid': 1,
       },
       // data: {
       //   offset: 0,
@@ -517,9 +535,9 @@ class UserService extends Service {
       const item = resultArray[i];
       const obj = await ctx.model.Fulin.LocalSkuMidList.findByPk(item.local_sku + '_' + shopObj[item.marketplace]);
       const data = {
-        local_sku_mid: item.local_sku + '_' + shopObj[item.marketplace],//item.mid,
+        local_sku_mid: item.local_sku + '_' + shopObj[item.marketplace], // item.mid,
         local_sku: item.local_sku,
-        mid: shopObj[item.marketplace],//item.mid,
+        mid: shopObj[item.marketplace], // item.mid,
         local_name: item.local_name,
         country: item.marketplace,
         cid: item.cid,
@@ -536,7 +554,7 @@ class UserService extends Service {
           ...data,
         }, {
           where: {
-            local_sku_mid: item.local_sku + '_' + shopObj[item.marketplace],//item.mid,
+            local_sku_mid: item.local_sku + '_' + shopObj[item.marketplace], // item.mid,
           },
         });
       }
@@ -551,7 +569,7 @@ class UserService extends Service {
         asin: item.asin1,
         local_name: item.local_name,
         sid: item.sid,
-        mid: shopObj[item.marketplace],//item.mid,
+        mid: shopObj[item.marketplace], // item.mid,
         country: item.marketplace,
         cid: item.cid,
         category_text: item.category_text,
@@ -592,7 +610,7 @@ class UserService extends Service {
       const shopObj = shopList.filter(element => {
         return result[i].dataValues.sid == element.sid;
       })[0] || {};
-      
+
       const obj = {
         pid_sid: result[i].dataValues.local_sku_sid,
         asin: result[i].dataValues.asin1,
